@@ -1,143 +1,133 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Booking\AdminBookingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Password;
-use App\Http\Controllers\ResetController;
-use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionsController;
-use App\Http\Controllers\Item\ItemController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\ResetController;
 use App\Http\Controllers\ChangePasswordController;
-use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\InfoUserController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Organization\OrganizationController;
+use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\Item\ItemController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| GUEST AREA (GLOBAL AUTH - SUPERADMIN)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
+Route::middleware('guest')->group(function () {
 
+    // Login & Register Superadmin
+    Route::get('/login', [SessionsController::class, 'create'])->name('login');
+    Route::post('/session', [SessionsController::class, 'store']);
 
-
-Route::group(['middleware' => 'auth'], function () {
-
-    Route::get('/', [HomeController::class, 'home']);
-	Route::get('dashboard', function () {
-		return view('dashboard');
-	})->name('dashboard');
-
-	Route::get('billing', function () {
-		return view('billing');
-	})->name('billing');
-
-	Route::get('profile', function () {
-		return view('profile');
-	})->name('profile');
-
-	Route::group(['middleware' => 'superadmin'], function () {
-		// User management
-		Route::get('user-management', [UserController::class, 'index'])->name('user-management-index');
-		Route::get('user-management/create', [UserController::class, 'create'])->name('user-management-create');
-		Route::post('user-management/create', [UserController::class, 'store'])->name('user-management-store');
-		Route::get('user-management/{id}/edit', [UserController::class, 'edit'])->name('user-management-edit');
-		Route::put('user-management/{id}/edit', [UserController::class, 'update'])->name('user-management-update');
-		Route::delete('user-management/{id}/delete', [UserController::class, 'destroy'])->name('user-management-destroy');
-
-		// Organization management
-		Route::get('organization-management', [OrganizationController::class, 'index'])->name('organization-management-index');
-		Route::get('organization-management/create', [OrganizationController::class, 'create'])->name('organization-management-create');
-		Route::post('organization-management/create', [OrganizationController::class, 'store'])->name('organization-management-store');
-		Route::get('organization-management/{slug}/edit', [OrganizationController::class, 'edit'])->name('organization-management-edit');
-		Route::put('organization-management/{slug}/edit', [OrganizationController::class, 'update'])->name('organization-management-update');
-		Route::delete('organization-management/{slug}/delete', [OrganizationController::class, 'destroy'])->name('organization-management-destroy');
-	});
-
-	Route::prefix('org/{organization:slug}')
-		->middleware(['tenant'])
-		->group(function () {
-		Route::get('dashboard', [HomeController::class, 'home'])->name('org.dashboard');
-
-		Route::group(['middleware' => 'admin'], function () {
-			// Category management
-			Route::get('category-management', [CategoryController::class, 'index'])->name('org.category-management-index');
-			Route::get('category-management/create', [CategoryController::class, 'create'])->name('org.category-management-create');
-			Route::post('category-management/create', [CategoryController::class, 'store'])->name('org.category-management-store');
-			Route::get('category-management/{slug}/edit', [CategoryController::class, 'edit'])->name('org.category-management-edit');
-			Route::put('category-management/{slug}/edit', [CategoryController::class, 'update'])->name('org.category-management-update');
-			Route::delete('category-management/{slug}/delete', [CategoryController::class, 'destroy'])->name('org.category-management-destroy');
-
-			// Item management
-			Route::get('item-management', [ItemController::class, 'index'])->name('org.item-management-index');
-			Route::get('item-management/create', [ItemController::class, 'create'])->name('org.item-management-create');
-			Route::post('item-management/create', [ItemController::class, 'store'])->name('org.item-management-store');
-			Route::get('item-management/{slug}/edit', [ItemController::class, 'edit'])->name('org.item-management-edit');
-			Route::put('item-management/{slug}/edit', [ItemController::class, 'update'])->name('org.item-management-update');
-			Route::delete('item-management/{slug}/delete', [ItemController::class, 'destroy'])->name('org.item-management-destroy');
-		});
-	});
-
-	Route::get('tables', function () {
-		return view('tables');
-	})->name('tables');
-
-    Route::get('/logout', [SessionsController::class, 'destroy']);
-	Route::get('/user-profile', [InfoUserController::class, 'create']);
-	Route::post('/user-profile', [InfoUserController::class, 'store']);
-    Route::get('/login', function () {
-		return view('dashboard');
-	})->name('sign-up');
-});
-
-
-// Global auth
-Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [RegisterController::class, 'create']);
     Route::post('/register', [RegisterController::class, 'store']);
-    Route::get('/login', [SessionsController::class, 'create']);
-    Route::post('/session', [SessionsController::class, 'store']);
-	Route::get('/login/forgot-password', [ResetController::class, 'create']);
-	Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
-	Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
-	Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
 
+    // Password Reset (Global)
+    Route::get('/login/forgot-password', [ResetController::class, 'create']);
+    Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
+    Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
+    Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
 });
 
-// Tenant/organization auth
-Route::prefix('org/{organization:slug}')
-    ->middleware(['guest', 'tenant'])
-    ->group(function () {
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED AREA (GLOBAL)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
 
-	// REGISTER
-	Route::get('/register', [RegisterController::class, 'create'])
-		->name('org.register');
-	Route::post('/register', [RegisterController::class, 'store']);
+    Route::get('/', [HomeController::class, 'home']);
 
-	// LOGIN
-	Route::get('/login', [SessionsController::class, 'create'])
-		->name('org.login');
-	Route::post('/session', [SessionsController::class, 'store']);
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/profile', fn () => view('profile'))->name('profile');
+    
 
-	// FORGOT PASSWORD
-	Route::get('/login/forgot-password', [ResetController::class, 'create']);
-	Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
+    Route::get('/logout', [SessionsController::class, 'destroy'])->name('logout');
 
-	// RESET PASSWORD
-	Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])
-		->name('password.reset');
-
-	Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])
-		->name('password.update');
+    Route::get('/user-profile', [InfoUserController::class, 'create']);
+    Route::post('/user-profile', [InfoUserController::class, 'store']);
 });
 
+/*
+|--------------------------------------------------------------------------
+| SUPERADMIN AREA
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'superadmin'])->group(function () {
 
-Route::get('/login', function () {
-    return view('session/login-session');
-})->name('login');
+    // User Management
+    Route::prefix('user-management')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('user-management-index');
+        Route::get('/create', [UserController::class, 'create'])->name('user-management-create');
+        Route::post('/create', [UserController::class, 'store'])->name('user-management-store');
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('user-management-edit');
+        Route::put('/{id}/edit', [UserController::class, 'update'])->name('user-management-update');
+        Route::delete('/{id}/delete', [UserController::class, 'destroy'])->name('user-management-destroy');
+    });
+
+    // Organization Management
+    Route::prefix('organization-management')->group(function () {
+        Route::get('/', [OrganizationController::class, 'index'])->name('organization-management-index');
+        Route::get('/create', [OrganizationController::class, 'create'])->name('organization-management-create');
+        Route::post('/create', [OrganizationController::class, 'store'])->name('organization-management-store');
+        Route::get('/{slug}/edit', [OrganizationController::class, 'edit'])->name('organization-management-edit');
+        Route::put('/{slug}/edit', [OrganizationController::class, 'update'])->name('organization-management-update');
+        Route::delete('/{slug}/delete', [OrganizationController::class, 'destroy'])->name('organization-management-destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| TENANT AUTH (LOGIN VIA TOKEN)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login/organization/{token}', [SessionsController::class, 'tenantLinkLogin'])
+        ->name('organization.login.link');
+
+    Route::post('/login/organization', [SessionsController::class, 'tenantLogin'])
+        ->name('organization.login.submit');
+});
+
+/*
+|--------------------------------------------------------------------------
+| TENANT AREA (ADMIN)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'tenant', 'admin'])->group(function () {
+
+    Route::get('/organization/dashboard', [HomeController::class, 'home_tenant'])
+        ->name('org.dashboard');
+
+    // Category Management
+    Route::prefix('organization/category-management')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('org.category-management-index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('org.category-management-create');
+        Route::post('/create', [CategoryController::class, 'store'])->name('org.category-management-store');
+        Route::get('/{slug}/edit', [CategoryController::class, 'edit'])->name('org.category-management-edit');
+        Route::put('/{slug}/edit', [CategoryController::class, 'update'])->name('org.category-management-update');
+        Route::delete('/{slug}/delete', [CategoryController::class, 'destroy'])->name('org.category-management-destroy');
+    });
+
+    // Item Management
+    Route::prefix('organization/item-management')->group(function () {
+        Route::get('/', [ItemController::class, 'index'])->name('org.item-management-index');
+        Route::get('/create', [ItemController::class, 'create'])->name('org.item-management-create');
+        Route::post('/create', [ItemController::class, 'store'])->name('org.item-management-store');
+        Route::get('/{slug}/edit', [ItemController::class, 'edit'])->name('org.item-management-edit');
+        Route::put('/{slug}/edit', [ItemController::class, 'update'])->name('org.item-management-update');
+        Route::delete('/{slug}/delete', [ItemController::class, 'destroy'])->name('org.item-management-destroy');
+    });
+
+    // Booking Management
+    Route::get('/organization/booking-management', [AdminBookingController::class, 'index'])->name('org.booking-management-index');
+    Route::get('/organization/booking-history', [AdminBookingController::class, 'show_booking_history'])->name('org.booking-history');
+    Route::post('/organization/booking/{id}/approve', [AdminBookingController::class, 'approve']);
+    Route::post('/organization/booking/{id}/reject', [AdminBookingController::class, 'reject']);
+});

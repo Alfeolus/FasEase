@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('auth')
 
     {{-- FLASH MESSAGE GLOBAL --}}
@@ -31,18 +30,6 @@
             @yield('content')
         </div>
 
-    {{-- VIRTUAL REALITY PAGE --}}
-    @elseif (\Request::is('virtual-reality')) 
-        @include('layouts.navbars.auth.nav')
-        <div class="border-radius-xl mt-3 mx-3 position-relative"
-             style="background-image: url('../assets/img/vr-bg.jpg'); background-size: cover;">
-            @include('layouts.navbars.auth.sidebar')
-            <main class="main-content mt-1 border-radius-lg">
-                @yield('content')
-            </main>
-        </div>
-        @include('layouts.footers.auth.footer')
-
     {{-- DEFAULT AUTH LAYOUT --}}
     @else
         @include('layouts.navbars.auth.sidebar')
@@ -56,5 +43,6 @@
     @endif
 
     @include('components.fixed-plugin')
+    @stack('js')
 
 @endsection

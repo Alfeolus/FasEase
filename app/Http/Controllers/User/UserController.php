@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -41,6 +42,8 @@ class UserController extends Controller
         $attributes['password'] = bcrypt($attributes['password'] );
         // $attributes['role'] = 'superadmin';
         // $attributes['organization_id'] = 1;
+
+        $attributes['login_token'] = Str::random(40);
 
         session()->flash('success', 'User account has been created.');
         $user = User::create($attributes);

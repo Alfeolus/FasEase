@@ -24,7 +24,8 @@ class User extends Authenticatable
         'phone',
         'role',
         'organization_id',
-        'notes'
+        'notes',
+        'login_token'
     ];
 
     /**

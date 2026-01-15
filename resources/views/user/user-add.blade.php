@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label for="organization_id" class="form-label
+                  <label for="phone">Organization</label>
                   <select class="form-control" name="organization_id" id="organization_id" aria-label="Organization" aria-describedby="organization">
                     <option value="" disabled selected>Select Organization</option>
                     @forelse($organizations as $organization)

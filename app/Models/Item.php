@@ -18,6 +18,7 @@ class Item extends Model
         'is_active',
         'max_book_duration',
         'category_id',
+        'quantity'
     ];
 
     public function category()

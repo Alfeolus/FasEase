@@ -13,14 +13,22 @@ class TenantMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        $organization = $request->route('organization');
-        if(!$organization || !$organization->is_active) {
-            abort(404, 'Organization not found or inactive.');
+        if (!auth()->check()) {
+            abort(404);
         }
-        // simpan organisasi/tenant yg aktif ke global
+
+        $organization = auth()->user()->organization;
+
+        if (!$organization || !$organization->is_active) {
+            abort(404);
+        }
+
         app()->instance('currentOrganization', $organization);
+
         return $next($request);
     }
+
+
 }

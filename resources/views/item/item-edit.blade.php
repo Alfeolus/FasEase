@@ -42,6 +42,13 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+                  <label for="quantity" class="form-label">Item Quantity</label>
+                  <input type="number" class="form-control" placeholder="Item Quantity" name="quantity" id="quantity" aria-label="Quantity" aria-describedby="quantity" value="{{ old('quantity', $data->quantity) }}">
+                  @error('quantity')
+                    <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                  @enderror
+                </div>
 
                 <div class="mb-3">
                   <label for="max_book_duration" class="form-label">Max Book Duration (hours)</label>

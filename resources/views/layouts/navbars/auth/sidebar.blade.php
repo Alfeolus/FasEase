@@ -14,10 +14,15 @@
 
             {{-- Dashboard --}}
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}">
+                <a class="nav-link {{ request()->routeIs('dashboard', 'org.dashboard') ? 'active' : '' }}"
+                href="{{ app()->bound('currentOrganization')
+                            ? route('org.dashboard', app('currentOrganization')->slug)
+                            : route('dashboard') }}">
+                    
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-gauge {{ Request::is('dashboard') ? 'text-white' : 'text-dark' }}"></i>
+                        <i class="fas fa-gauge {{ request()->routeIs('dashboard', 'org.dashboard') ? 'text-white' : 'text-dark' }}"></i>
                     </div>
+
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
@@ -35,6 +40,25 @@
                     <span class="nav-link-text ms-1">User Profile</span>
                 </a>
             </li>
+
+            {{-- Copy link login --}}
+            @if (app()->bound('currentOrganization') && auth()->user()?->login_token)
+            <li class="nav-item pb-2">
+                <a href="javascript:void(0)"
+                class="nav-link"
+                id="copy-login-link"
+                data-login-url="{{ url('/login/organization/' . auth()->user()->login_token) }}">
+
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-link text-dark"></i>
+                    </div>
+
+                    <span class="nav-link-text ms-1">Copy Login Link</span>
+                </a>
+            </li>
+            @endif
+
+
 
             <li class="nav-item mt-2">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Management</h6>
@@ -62,12 +86,13 @@
                 </li>
             @endif
 
-            @if (auth()->check() && auth()->user()->role === 'admin')
+            @if (auth()->check() && auth()->user()->role === 'admin' && auth()->user()->organization)
                 {{-- Category Management --}}
                 <li class="nav-item pb-2">
-                    <a class="nav-link {{ Request::is('category-management') ? 'active' : '' }}" href="{{ url('category-management') }}">
+                    <a class="nav-link {{ Request::is('category-management*') ? 'active' : '' }}"
+                    href="{{ route('org.category-management-index') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-icons {{ Request::is('category-management') ? 'text-white' : 'text-dark' }}"></i>
+                            <i class="fas fa-icons {{ Request::is('category-management*') ? 'text-white' : 'text-dark' }}"></i>
                         </div>
                         <span class="nav-link-text ms-1">Category Management</span>
                     </a>
@@ -75,52 +100,40 @@
 
                 {{-- Item Management --}}
                 <li class="nav-item pb-2">
-                    <a class="nav-link {{ Request::is('item-management') ? 'active' : '' }}" href="{{ url('item-management') }}">
+                    <a class="nav-link {{ Request::is('item-management*') ? 'active' : '' }}"
+                    href="{{ route('org.item-management-index') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-boxes-stacked {{ Request::is('item-management') ? 'text-white' : 'text-dark' }}"></i>
+                            <i class="fas fa-boxes-stacked {{ Request::is('item-management*') ? 'text-white' : 'text-dark' }}"></i>
                         </div>
                         <span class="nav-link-text ms-1">Item Management</span>
                     </a>
                 </li>
 
+
                 <li class="nav-item mt-2">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Booking Information</h6>
                 </li>
 
-                {{-- Tables --}}
+                {{-- Booking Management --}}
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('tables') ? 'active' : '' }}" href="{{ url('tables') }}">
+                    <a class="nav-link {{ Request::is('org.booking-management-index') ? 'active' : '' }}" href="{{ route('org.booking-management-index') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-table {{ Request::is('tables') ? 'text-white' : 'text-dark' }}"></i>
+                            <i class="fas fa-table {{ Request::is('org.booking-management-index') ? 'text-white' : 'text-dark' }}"></i>
                         </div>
-                        <span class="nav-link-text ms-1">Tables</span>
+                        <span class="nav-link-text ms-1">Bookings</span>
                     </a>
                 </li>
 
                 {{-- Billing --}}
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('billing') ? 'active' : '' }}" href="{{ url('billing') }}">
+                    <a class="nav-link {{ Request::is('org.booking-history') ? 'active' : '' }}" href="{{ route('org.booking-history') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-credit-card {{ Request::is('billing') ? 'text-white' : 'text-dark' }}"></i>
+                            <i class="fas fa-credit-card {{ Request::is('org.booking-history') ? 'text-white' : 'text-dark' }}"></i>
                         </div>
-                        <span class="nav-link-text ms-1">Billing</span>
-                    </a>
-                </li>
-
-                {{-- Virtual Reality --}}
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('virtual-reality') ? 'active' : '' }}" href="{{ url('virtual-reality') }}">
-                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-vr-cardboard {{ Request::is('virtual-reality') ? 'text-white' : 'text-dark' }}"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Virtual Reality</span>
+                        <span class="nav-link-text ms-1">Booking History</span>
                     </a>
                 </li>
             @endif
-
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account Pages</h6>
-            </li>
 
 
             {{-- Sign In --}}
@@ -146,3 +159,5 @@
         </ul>
     </div>
 </aside>
+
+

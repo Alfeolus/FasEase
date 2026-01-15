@@ -10,4 +10,18 @@ class HomeController extends Controller
     {
         return redirect('dashboard');
     }
+
+    public function home_tenant()
+    {
+        $user = auth()->user();
+
+        if (!$user || !$user->organization) {
+            abort(403, 'Organization not found.');
+        }
+
+        return view('dashboard', [
+            'organization' => $user->organization
+        ]);
+    }
+
 }

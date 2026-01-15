@@ -19,8 +19,18 @@
   <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
 
   <title>
-    FasEase - @yield('title')
-  </title>
+  FasEase
+  @if(app()->bound('currentOrganization'))
+      x 
+      {{ app('currentOrganization')->name }}
+  @else
+      - Main
+  @endif
+  @hasSection('title')
+      | @yield('title')
+  @endif
+</title>
+
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -47,14 +57,14 @@
     @yield('guest')
   @endguest
 
-  {{-- @if(session()->has('success'))
+  @if(session()->has('success'))
     <div x-data="{ show: true }"
          x-init="setTimeout(() => show = false, 4000)"
          x-show="show"
          class="position-fixed bg-success rounded right-3 text-sm py-2 px-4">
       <p class="m-0">{{ session('success') }}</p>
     </div>
-  @endif --}}
+  @endif
 
   <!-- Core JS Files -->
   <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
@@ -66,7 +76,6 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 
-  @stack('rtl')
   @stack('dashboard')
 
   <script>
@@ -75,6 +84,9 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), { damping: '0.5' });
     }
   </script>
+  <script src="{{ asset('assets/js/sidebar.js') }}"></script>
+
+
 
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>

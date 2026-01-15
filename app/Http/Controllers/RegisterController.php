@@ -26,17 +26,9 @@ class RegisterController extends Controller
         // $attributes['role'] = 'superadmin';
         // $attributes['organization_id'] = 1;
 
-        if(app()->bound('currentOrganization')){
-            $attributes['organization_id'] = app('currentOrganization')->id;
-            $attributes['role'] = 'user';
-        }
-
         $user = User::create($attributes);
-        Auth::login($user); 
-
-        $organization = auth()->user()->organizations()->first();
 
         session()->flash('success', 'Your account has been created.');
-        return redirect()->route('org.dashboard', $organization->slug);
+        return redirect()->route('dashboard');
     }
 }

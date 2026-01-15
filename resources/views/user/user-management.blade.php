@@ -32,6 +32,9 @@
                                         Phone
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Login URL
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         role
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -57,6 +60,19 @@
                                     <td class="text-center">
                                         <p class="text-xs font-weight-bold mb-0">{{ $data->phone }}</p>
                                     </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <span class="text-xs text-secondary text-truncate" style="max-width:140px">
+                                                {{ route('organization.login.link', $data->login_token) }}
+                                            </span>
+
+                                            <i class="fas fa-copy text-info cursor-pointer"
+                                            title="Copy login URL"
+                                            onclick="copyToClipboard('{{ route('organization.login.link', $data->login_token) }}')">
+                                            </i>
+                                        </div>
+                                    </td>
+
                                     <td class="text-center">
                                         <p class="text-xs font-weight-bold mb-0">{{ $data->role }}</p>
                                     </td>
@@ -98,5 +114,18 @@
         </div>
     </div>
 </div>
- 
+
+@push('js')
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Login URL copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+    });
+}
+</script>
+@endpush
+
+
 @endsection
