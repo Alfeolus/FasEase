@@ -14,9 +14,32 @@ class RegisterController extends Controller
         return view('session.register');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        $attributes = request()->validate([
+        $attributes = $request->validate([
+            'name' => ['required', 'max:50'],
+            'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
+            'password' => ['required', 'min:5', 'max:20'],
+            'phone' => ['required', 'max:15'],
+        ]);
+        $attributes['password'] = bcrypt($attributes['password'] );
+        $attributes['role'] = 'superadmin';
+        $attributes['organization_id'] = 1;
+
+        $user = User::create($attributes);
+
+        $request->session()->regenerate();
+        session([
+            'login_type' => 'superadmin'
+        ]);
+
+        session()->flash('success', 'Your account has been created.');
+        return redirect()->route('dashboard');
+    }
+
+    public function store_organization(Request $request)
+    {
+        $attributes = $request->validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
             'password' => ['required', 'min:5', 'max:20'],
@@ -27,6 +50,10 @@ class RegisterController extends Controller
         // $attributes['organization_id'] = 1;
 
         $user = User::create($attributes);
+        $request->session()->regenerate();
+        session([
+            'login_type' => 'superadmin'
+        ]);
 
         session()->flash('success', 'Your account has been created.');
         return redirect()->route('dashboard');

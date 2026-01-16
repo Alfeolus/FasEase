@@ -17,7 +17,7 @@
                   <p class="mb-0">Password <b>secret</b></p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="POST" action="/session">
+                  <form role="form" method="POST" action="{{ route('login-superadmin-store') }}">
                     @csrf
                     <label>Email</label>
                     <div class="mb-3">
@@ -48,7 +48,7 @@
                 </small>
                   <p class="mb-4 text-sm mx-auto">
                     Don't have an account?
-                    <a href="register" class="text-info text-gradient font-weight-bold">Sign up</a>
+                    <a href="{{ route('register-superadmin-index') }}" class="text-info text-gradient font-weight-bold">Sign up</a>
                   </p>
                 </div>
               </div>

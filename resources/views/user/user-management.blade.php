@@ -41,6 +41,9 @@
                                         Creation Date
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Status
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Action
                                     </th>
                                 </tr>
@@ -79,6 +82,14 @@
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">{{ $data->created_at }}</span>
                                     </td>
+                                    <td class="align-middle text-center text-sm">
+                                        @if($data->is_active)
+                                            <span class="badge badge-sm bg-gradient-success">Active</span>
+                                        @else
+                                            <span class="badge badge-sm bg-gradient-danger">Blocked</span>
+                                        @endif
+                                    </td>
+                                    
                                     <td class="text-center">
                                         <a href="{{ route('user-management-edit', $data->id) }}" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit user">
                                             <i class="fas fa-user-edit text-secondary"></i>

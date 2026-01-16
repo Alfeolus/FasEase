@@ -79,9 +79,9 @@
 
                                     <td class="text-center">
                                         @if($data->is_active)
-                                            <p class="text-xs font-weight-bold mb-0 text-success">Active</p>
+                                            <span class="badge badge-sm bg-gradient-success">Available</span>
                                         @else
-                                            <p class="text-xs font-weight-bold mb-0 text-danger">Inactive</p>
+                                            <span class="badge badge-sm bg-gradient-danger">Unavailable</span>
                                         @endif
                                     </td>
 

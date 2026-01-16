@@ -21,11 +21,11 @@ use App\Http\Controllers\Item\ItemController;
 Route::middleware('guest')->group(function () {
 
     // Login & Register Superadmin
-    Route::get('/login', [SessionsController::class, 'create'])->name('login');
-    Route::post('/session', [SessionsController::class, 'store']);
+    Route::get('/login/fasease', [SessionsController::class, 'create'])->name('login-superadmin-index');
+    Route::post('/session/fasease', [SessionsController::class, 'store'])->name('login-superadmin-store');
 
-    Route::get('/register', [RegisterController::class, 'create']);
-    Route::post('/register', [RegisterController::class, 'store']);
+    Route::get('/register/fasease', [RegisterController::class, 'create'])->name('register-superadmin-index');
+    Route::post('/register/fasease', [RegisterController::class, 'store'])->name('register-superadmin-store');
 
     // Password Reset (Global)
     Route::get('/login/forgot-password', [ResetController::class, 'create']);
