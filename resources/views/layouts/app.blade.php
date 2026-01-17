@@ -47,6 +47,7 @@
   <link id="pagestyle" href="{{ asset('assets/css/soft-ui-dashboard.css?v=1.0.3') }}" rel="stylesheet" />
   <link id="pagestyle" href="{{ asset('assets/css/user-dashboard.css') }}" rel="stylesheet" />
   <link id="pagestyle" href="{{ asset('assets/css/user-item-page.css') }}" rel="stylesheet" />
+  {{-- <link id="pagestyle" href="{{ asset('assets/css/footer-auth.css') }}" rel="stylesheet" /> --}}
 </head>
 
 <body class="g-sidenav-show bg-gray-100 {{ (\Request::is('rtl') ? 'rtl' : (Request::is('virtual-reality') ? 'virtual-reality' : '')) }}">

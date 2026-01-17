@@ -11,7 +11,7 @@
 
 /* === BANNER SECTION BARU === */
 .main-banner {
-    min-height: 500px;
+    min-height: 400px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -33,7 +33,7 @@
 .banner-content {
     padding: 4rem;
     position: relative;
-    z-index: 2; /* atur overlay */
+    z-index: 2;
     width: 100%; 
 }
 
@@ -47,18 +47,6 @@
     font-size: 1.1rem;
 }
 
-/* Tombol di banner */
-.btn-banner {
-    background-color: #fff;
-    color: #333;
-    font-weight: bold;
-    border: none;
-}
-
-.btn-banner:hover {
-    background-color: #f0f0f0;
-    color: #000;
-}
 
 
 /* --- Category Section --- */

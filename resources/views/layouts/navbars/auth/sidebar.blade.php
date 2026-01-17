@@ -207,7 +207,7 @@
                     <div class="docs-info">
                         <h6 class="text-white up mb-0">Need help?</h6>
                         <p class="text-xs font-weight-bold">Please let us know</p>
-                        <a href="/documentation/getting-started/overview.html" target="_blank" class="btn btn-white btn-sm w-100 mb-0">Contact Us</a>
+                        <a href="#" target="_blank" class="btn btn-white btn-sm w-100 mb-0">Contact Us</a>
                     </div>
                 </div>
             </div>

@@ -11,13 +11,13 @@
             <div class="col-lg-6">
                 <ul class="nav nav-footer justify-content-center justify-content-lg-end">
                     <li class="nav-item">
-                        <a href="/about" class="nav-link text-muted">About</a>
+                        <a href="#" class="nav-link text-muted">About</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/privacy-policy" class="nav-link text-muted">Privacy Policy</a>
+                        <a href="#" class="nav-link text-muted">Privacy Policy</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/terms" class="nav-link pe-0 text-muted">Terms</a>
+                        <a href="#" class="nav-link pe-0 text-muted">Terms</a>
                     </li>
                 </ul>
             </div>

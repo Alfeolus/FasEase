@@ -1,0 +1,14 @@
+.fixed-bottom-custom {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    z-index: 99;
+    background-color: #f8f9fa; 
+}
+
+@media (min-width: 1200px) {
+    .fixed-bottom-custom {
+        padding-left: 17.125rem; 
+    }
+}
