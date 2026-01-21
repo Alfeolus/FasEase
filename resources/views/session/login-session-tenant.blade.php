@@ -11,15 +11,13 @@
             <div class="card card-plain mt-8">
 
               <div class="card-header pb-0 text-left bg-transparent">
-                <h4 class="font-weight-bolder text-info text-gradient">
+                <h1 class="font-weight-bolder text-info text-gradient">
                   {{ $organization->name }}
-                </h4>
+                </h1>
                 <p class="mb-1 text-sm">
-                  Tenant Login
+                  Please sign in with your authorized account to securely access
+                  the system and continue your activities.
                 </p>
-                <span class="badge bg-info mb-3">
-                  {{ $organization->slug }}
-                </span>
               </div>
 
               <div class="card-body">
@@ -110,7 +108,7 @@
           <div class="col-md-6">
             <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
               <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6"
-                   style="background-image:url('{{ asset('assets/img/curved-images/curved6.jpg') }}')">
+                   style="background-image:url('{{ asset('assets/img/curved-images/bg-2.png') }}')">
               </div>
             </div>
           </div>
