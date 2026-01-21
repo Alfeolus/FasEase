@@ -69,7 +69,11 @@
 
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">
-                                                {{ $data->created_at->format('d M Y') }}
+                                                @isset($data->created_at)
+                                                    {{ $data->created_at->format('d M Y') }}
+                                                @else
+                                                    -
+                                                @endisset
                                             </span>
                                         </td>
 
