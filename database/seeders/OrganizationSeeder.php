@@ -20,6 +20,7 @@ class OrganizationSeeder extends Seeder
             ],
             [
                 'name'  => 'FasEase',
+                'slug' => 'fasease',
                 'token' => Str::random(40),
                 'image' => null,
             ]

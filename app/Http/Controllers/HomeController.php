@@ -22,16 +22,21 @@ class HomeController extends Controller
         $recentOrganizations = Organization::orderBy('created_at', 'desc')->take(10)->get();
 
         // User per bulan
-        $usersPerMonth = User::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('month')
-            ->pluck('count', 'month')
+        $usersPerDay = User::selectRaw('DATE(created_at) as day, COUNT(*) as count')
+            ->whereBetween('created_at', [
+                Carbon::now()->subDays(30),
+                Carbon::now()
+            ])
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('count', 'day')
             ->toArray();
 
-        $userCounts = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $userCounts[] = $usersPerMonth[$i] ?? 0;
-        }
+        $userChartLabels = array_map(function ($date) {
+            return Carbon::parse($date)->format('d M');
+        }, array_keys($usersPerDay));
+
+        $userChartData = array_values($usersPerDay);
 
         return view('dashboard', compact(
             'totalUsers',
@@ -40,7 +45,8 @@ class HomeController extends Controller
             'blockedUsers',
             'recentUsers',
             'recentOrganizations',
-            'userCounts'
+            'userChartLabels',
+            'userChartData'
         ));
     }
 
@@ -63,17 +69,23 @@ class HomeController extends Controller
         $totalItems = Item::where('organization_id', $orgId)->count();
         $totalCategories = Category::where('organization_id', $orgId)->count();
 
-        $bookingsPerMonth = Booking::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+        $bookingsPerDay = Booking::selectRaw('DATE(created_at) as day, COUNT(*) as count')
             ->where('organization_id', $orgId)
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('month')
-            ->pluck('count', 'month')
+            ->whereBetween('created_at', [
+                now()->subDays(30)->startOfDay(),
+                now()->endOfDay()
+            ])
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('count', 'day')
             ->toArray();
 
-        $bookingChart = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $bookingChart[] = $bookingsPerMonth[$i] ?? 0;
-        }
+        // Label & data untuk chart
+        $bookingChartLabels = array_map(function ($date) {
+            return Carbon::parse($date)->format('d M');
+        }, array_keys($bookingsPerDay));
+
+        $bookingChartData = array_values($bookingsPerDay);
 
         $recentRequests = Booking::with(['user', 'item']) 
                             ->where('organization_id', $orgId)
@@ -88,7 +100,8 @@ class HomeController extends Controller
             'activeBookings' => $activeBookings,
             'totalItems' => $totalItems,
             'totalCategories' => $totalCategories,
-            'bookingChart' => $bookingChart,
+            'bookingChartLabels' => $bookingChartLabels,
+            'bookingChartData' => $bookingChartData,
             'recentRequests' => $recentRequests,
         ]);
     }

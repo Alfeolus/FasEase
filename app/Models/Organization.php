@@ -17,6 +17,8 @@ class Organization extends Model
         'image',
         'token'
     ];
+    
+
 
     public function users() {
         return $this->hasMany(User::class);

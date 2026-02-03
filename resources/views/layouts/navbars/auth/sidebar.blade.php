@@ -3,7 +3,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none" id="iconSidenav"></i>
         <a class="navbar-brand d-flex align-items-center m-0" href="{{ route('dashboard') }}">
-            <img src="{{ asset('assets/img/logo-ct.png') }}" class="navbar-brand-img h-100" alt="logo">
+            <img src="{{ asset('assets/img/logo-fasease.png') }}" class="navbar-brand-img h-100" alt="logo">
             <span class="ms-3 font-weight-bold">FasEase</span>
         </a>
     </div>
