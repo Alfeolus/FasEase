@@ -129,11 +129,46 @@
 @push('js')
 <script>
 function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert('Login URL copied to clipboard!');
-    }).catch(err => {
-        console.error('Failed to copy:', err);
-    });
+    if (navigator.clipboard && window.isSecureContext) {
+
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                showCopyAlert();
+            })
+            .catch(() => {
+                fallbackCopy(text);
+            });
+
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+        document.execCommand("copy");
+        showCopyAlert();
+    } catch (err) {
+        alert("Failed to copy URL");
+        console.error(err);
+    }
+
+    document.body.removeChild(textarea);
+}
+
+function showCopyAlert() {
+    alert("Login URL copied to clipboard!");
 }
 </script>
 @endpush
