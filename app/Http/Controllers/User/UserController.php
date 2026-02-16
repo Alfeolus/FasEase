@@ -13,15 +13,22 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $datas = User::whereKeyNot(auth()->id())->paginate(50);
-        if ($request->has(key: 'search')) {
-            $datas = User::whereKeyNot(auth()->id())
-                ->where('name', 'like', '%' . $request->search . '%')
-                ->latest()
-                ->paginate(50);
-        }
+        $datas = User::query()
+            ->whereKeyNot(auth()->id())
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = $request->search;
+
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+                });
+            })
+            ->paginate(50)
+            ->withQueryString();
+
         return view('user.user-management', compact('datas'));
     }
+
 
     public function create()
     {

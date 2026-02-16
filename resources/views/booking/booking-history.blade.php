@@ -83,23 +83,23 @@
                                             {{-- Status --}}
                                             <td class="align-middle text-center">
                                                 @if ($booking->status === 'approved')
-                                                    <span class="badge badge-sm bg-gradient-info">
+                                                    <span class="badge badge-sm bg-info">
                                                         Approved
                                                     </span>
                                                 @elseif ($booking->status === 'pending')
-                                                    <span class="badge badge-sm bg-gradient-secondary">
+                                                    <span class="badge badge-sm bg-secondary">
                                                         Pending
                                                     </span>
                                                 @elseif ($booking->status === 'canceled')
-                                                    <span class="badge badge-sm bg-gradient-warning">
+                                                    <span class="badge badge-sm bg-warning">
                                                         Canceled
                                                     </span>
                                                 @elseif ($booking->status === 'completed')
-                                                    <span class="badge badge-sm bg-gradient-success">
+                                                    <span class="badge badge-sm bg-success">
                                                         Completed
                                                     </span>
                                                 @else
-                                                    <span class="badge badge-sm bg-gradient-danger">
+                                                    <span class="badge badge-sm bg-danger">
                                                         Rejected
                                                     </span>
                                                 @endif
@@ -108,11 +108,11 @@
                                             {{-- Notes --}}
                                             <td class="align-middle text-center text-sm">
                                                 @if ($booking->status === 'rejected')
-                                                    <span class="text-danger text-xs">
+                                                    <span class="text-body text-md">
                                                         {{ $booking->reject_reason }}
                                                     </span>
                                                 @elseif($booking->status === 'canceled')
-                                                    <span class="text-warning text-xs">
+                                                    <span class="text-body text-md">
                                                         {{ $booking->cancel_reason }}
                                                     </span>
                                                 @else

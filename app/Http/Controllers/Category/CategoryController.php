@@ -11,13 +11,19 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $datas = Category::where('organization_id', app('currentOrganization')->id)->latest()->paginate(50);
-        if ($request->has(key: 'search')) {
-            $datas = Category::where('organization_id', app('currentOrganization')->id)
-                ->where('name', 'like', '%' . $request->search . '%')
-                ->latest()
-                ->paginate(50);
-        }
+        $orgId = app('currentOrganization')->id;
+
+        $datas = Category::query()
+            ->where('organization_id', $orgId)
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+
+                $query->where('name', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate(50)
+            ->withQueryString();
+
         return view('category.category-management', compact('datas'));
     }
 
