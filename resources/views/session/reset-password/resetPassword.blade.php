@@ -2,16 +2,16 @@
 
 @section('content')
 
-<div class="page-header section-height-75">
+<div class="page-header min-vh-100">
     <div class="container">
         <div class="row">
             <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
                 <div class="card card-plain mt-8">
                     <div class="card-header pb-0 text-left bg-transparent">
-                        <h4 class="mb-0">Change password</h4>
+                        <h3 class="mb-0 text-info text-gradient">CHANGE PASSWORD</h3>
                     </div>
                     <div class="card-body">
-                        <form role="form" action="/reset-password" method="POST">
+                        <form role="form" action="{{ route('password.update') }}" method="POST">
                             @csrf
                             <input type="hidden" name="token" value="{{ $token }}">
                             <div>
