@@ -27,7 +27,7 @@ class RegisterController extends Controller
         $attributes = $request->validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
-            'password' => ['required', 'min:5', 'max:20'],
+            'password' => ['required', 'min:8', 'max:20'],
             'phone' => ['required', 'max:15'],
         ]);
         $attributes['password'] = bcrypt($attributes['password'] );
@@ -53,7 +53,7 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
-            'password' => ['required', 'min:5', 'max:20'],
+            'password' => ['required', 'min:8', 'max:20'],
             'phone' => ['required', 'max:15'],
         ]);
 

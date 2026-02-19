@@ -41,7 +41,7 @@ class UserController extends Controller
         $attributes = request()->validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
-            'password' => ['required', 'min:5', 'max:20'],
+            'password' => ['required', 'min:8', 'max:20'],
             'phone' => ['required', 'max:15'],
             'role' => ['required'],
             'organization_id' => ['required'],
@@ -74,6 +74,7 @@ class UserController extends Controller
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['required', 'max:15'],
+            'password' => ['required', 'min:8', 'max:20'],
             'role' => ['required'],
             'organization_id' => ['required'],
             'is_active' => ['required'],
