@@ -11,12 +11,16 @@ class OrganizationController extends Controller
 {
     public function index(Request $request)
     {
-        $datas = Organization::latest()->paginate(50);
-        if ($request->has(key: 'search')) {
-            $datas = Organization::where('name', 'like', '%' . $request->search . '%')
-                ->latest()
-                ->paginate(50);
-        }
+        $datas = Organization::query()
+        ->when($request->filled('search'), function ($query) use ($request) {
+            $search = $request->search;
+
+            $query->where('name', 'like', "%$search%");
+        })
+        ->latest()
+        ->paginate(50)
+        ->withQueryString();
+
         return view('organization.organization-management', compact('datas'));
     }
 

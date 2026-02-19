@@ -31,8 +31,8 @@ Route::middleware('guest')->group(function () {
     Route::post('fasease/register', [RegisterController::class, 'store'])->name('register-superadmin-store');
 
     // Password Reset (Global)
-    Route::get('/login/forgot-password', [ResetController::class, 'create']);
-    Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
+    Route::get('/login/forgot-password', [ResetController::class, 'create'])->name('login.forgot-password');
+    Route::post('/forgot-password', [ResetController::class, 'sendEmail'])->name('forgot-password-email');
     Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
     Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
 

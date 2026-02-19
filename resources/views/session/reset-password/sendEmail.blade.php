@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="page-header section-height-75">
+<div class="page-header min-vh-100">
     <div class="container">
         <div class="row">
             <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
@@ -26,11 +26,11 @@
                         </div>
                     @endif
                     <div class="card-header pb-0 text-left bg-transparent">
-                        <h4 class="mb-0">Forgot your password? Enter your email here</h4>
+                        <h3 class="font-weight-bolder text-info text-gradient">Forgot your password? Enter your email here</h3>
                     </div>
                     <div class="card-body">
                     
-                        <form action="/forgot-password" method="POST" role="form text-left">
+                        <form action="{{  route('forgot-password-email') }}" method="POST" role="form text-left">
                             @csrf
                             <div>
                                 <label for="email">Email</label>

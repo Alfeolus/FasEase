@@ -33,7 +33,7 @@
                   <label for="role" class="form-label">Role</label>
                   <select class="form-control" name="role" id="role" aria-label="Role" aria-describedby="role">
                     <option value="" disabled selected>Select Role</option>
-                    <option value="admin"
+                    <option value="superadmin"
                       {{ old('role', $data->role) == 'superadmin' ? 'selected' : '' }}>
                       Super Admin
                     </option>

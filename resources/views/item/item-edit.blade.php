@@ -42,13 +42,13 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                   <label for="quantity" class="form-label">Item Quantity</label>
                   <input type="number" class="form-control" placeholder="Item Quantity" name="quantity" id="quantity" aria-label="Quantity" aria-describedby="quantity" value="{{ old('quantity', $data->quantity) }}">
                   @error('quantity')
                     <p class="text-danger text-xs mt-2">{{ $message }}</p>
                   @enderror
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                   <label for="max_book_duration" class="form-label">Max Book Duration (hours)</label>
@@ -113,18 +113,6 @@
                     <option value="" disabled selected>Select Category</option>
                     @forelse($categories as $category)
                       <option value="{{ $category->id }}" {{ old('category_id', $data->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                    @empty
-                      <option value="">No data</option>
-                    @endforelse
-                  </select>
-                </div>
-
-                <div class="mb-3">
-                  <label for="organization_id" class="form-label">Organization</label>
-                  <select class="form-control" name="organization_id" id="organization_id" aria-label="Organization" aria-describedby="organization">
-                    <option value="" disabled selected>Select Organization</option>
-                    @forelse($organizations as $organization)
-                      <option value="{{ $organization->id }}" {{ old('organization_id', $data->organization_id) == $organization->id ? 'selected' : '' }}>{{ $organization->name }}</option>
                     @empty
                       <option value="">No data</option>
                     @endforelse

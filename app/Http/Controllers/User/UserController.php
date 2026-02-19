@@ -13,15 +13,22 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $datas = User::whereKeyNot(auth()->id())->paginate(50);
-        if ($request->has(key: 'search')) {
-            $datas = User::whereKeyNot(auth()->id())
-                ->where('name', 'like', '%' . $request->search . '%')
-                ->latest()
-                ->paginate(50);
-        }
+        $datas = User::query()
+            ->whereKeyNot(auth()->id())
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = $request->search;
+
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+                });
+            })
+            ->paginate(50)
+            ->withQueryString();
+
         return view('user.user-management', compact('datas'));
     }
+
 
     public function create()
     {
@@ -34,7 +41,7 @@ class UserController extends Controller
         $attributes = request()->validate([
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
-            'password' => ['required', 'min:5', 'max:20'],
+            'password' => ['required', 'min:8', 'max:20'],
             'phone' => ['required', 'max:15'],
             'role' => ['required'],
             'organization_id' => ['required'],
@@ -67,6 +74,7 @@ class UserController extends Controller
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['required', 'max:15'],
+            'password' => ['required', 'min:8', 'max:20'],
             'role' => ['required'],
             'organization_id' => ['required'],
             'is_active' => ['required'],
