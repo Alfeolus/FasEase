@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -33,19 +34,17 @@ class ItemController extends Controller
         return view('item.item-add', compact('categories', ));
     }
 
-    public function generateBookingSlot(Item $item){
+    public function generateBookingSlot(Item $item)
+    {
         $slots = [];
         $start = Carbon::parse($item->opening_time);
         $end = Carbon::parse($item->closing_time);
         $duration = $item->max_book_duration;
 
-        while($start->addHours(0) < $end){
+        while ($start->copy()->addHours($duration) <= $end) {
+
             $slotStart = $start->copy();
             $slotEnd = $start->copy()->addHours($duration);
-
-            if($slotEnd > $end){
-                break;
-            }
 
             $slots[] = [
                 'start' => $slotStart->format('H:i'),
@@ -54,6 +53,7 @@ class ItemController extends Controller
 
             $start->addHours($duration);
         }
+
         return $slots;
     }
 
@@ -74,13 +74,13 @@ class ItemController extends Controller
         $input['organization_id'] = auth()->user()->organization_id;
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
+            $path = $request->file('image')->store(
+                'categories',   
+                'public'        
+            );
+            $input['image'] = 'storage/' . $path;
+
         } else {
-            // default image
             $input['image'] = 'storage/no_image.png';
         }
 
@@ -95,33 +95,45 @@ class ItemController extends Controller
         return view('item.item-edit', compact('data', 'categories'));
     }
 
-    public function update(Request $request, $slug){
+    public function update(Request $request, $slug)
+    {
+        $item = Item::where('slug', $slug)
+            ->where('organization_id', auth()->user()->organization_id)
+            ->firstOrFail();
+
         $request->validate([
             'category_id' => 'required',
-            'name' => 'required|string|max:255|',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'is_active' => 'required|boolean',
             'max_book_duration' => 'required|integer|min:1',
         ]);
 
-        $slug_new = Item::generateSlug($request->name);
-        $input = $request->only(['name', 'organization_id', 'description', 'max_book_duration', 'category_id']);
-        $input['slug'] = $slug_new;
-        $input['is_active'] = $request->is_active;
-        $input['organization_id'] = auth()->user()->organization_id;
+        $input = [
+            'name' => $request->name,
+            'slug' => Item::generateSlug($request->name),
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'max_book_duration' => $request->max_book_duration,
+            'is_active' => $request->is_active,
+            'organization_id' => auth()->user()->organization_id,
+        ];
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
-        } 
+            if ($item->image && $item->image !== 'storage/no_image.png') {
+                $oldPath = str_replace('storage/', '', $item->image);
+                Storage::disk('public')->delete($oldPath);
+            }
 
-        Item::where('slug', $slug)->update($input);
-        session()->flash('success', 'Item has been updated.');
-        return redirect()->route('org.item-management-index');
+            $path = $request->file('image')->store('items', 'public');
+            $input['image'] = 'storage/' . $path;
+        }
+
+        $item->update($input);
+
+        return redirect()->route('org.item-management-index')
+            ->with('success', 'Item has been updated.');
     }
 
     public function destroy($slug)
