@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class OrganizationController extends Controller
 {
@@ -45,16 +46,15 @@ class OrganizationController extends Controller
         $input['token'] = Str::random(40);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
+            $path = $request->file('image')->store(
+                'categories',   
+                'public'       
+            );
+            $input['image'] = 'storage/' . $path;
+
         } else {
-            // default image
             $input['image'] = 'storage/no_image.png';
         }
-
 
         Organization::create($input);
         session()->flash('success', 'Organization has been created.');
@@ -69,6 +69,8 @@ class OrganizationController extends Controller
 
     public function update(Request $request, $slug)
     {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -77,21 +79,29 @@ class OrganizationController extends Controller
             'image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
-        $slug_new = Organization::generateSlug($request->name);
-        $input = $request->only(['name', 'email', 'phone', 'location']);
-        $input['slug'] = $slug_new;
+        $input = [
+            'name' => $request->name,
+            'slug' => Organization::generateSlug($request->name),
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'location' => $request->location,
+        ];
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
-        } 
 
-        Organization::where('slug', $slug)->update($input);
-        session()->flash('success', 'Organization has been updated.');
-        return redirect('organization-management');
+            if ($organization->image && $organization->image !== 'storage/no_image.png') {
+                $oldPath = str_replace('storage/', '', $organization->image);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('image')->store('organizations', 'public');
+            $input['image'] = 'storage/' . $path;
+        }
+
+        $organization->update($input);
+
+        return redirect('organization-management')
+            ->with('success', 'Organization has been updated.');
     }
 
     public function destroy($slug)

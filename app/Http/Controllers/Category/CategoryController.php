@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -49,13 +50,13 @@ class CategoryController extends Controller
         $input['organization_id'] = auth()->user()->organization_id;
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
+            $path = $request->file('image')->store(
+                'categories',   
+                'public'        
+            );
+            $input['image'] = 'storage/' . $path;
+
         } else {
-            // default image
             $input['image'] = 'storage/no_image.png';
         }
         
@@ -79,26 +80,33 @@ class CategoryController extends Controller
 
     public function update(Request $request, $slug)
     {
+        $category = Category::where('slug', $slug)->firstOrFail();
+
         $request->validate([
-            'name'=>'required|string|max:255|',
-            'image'=>'nullable|image|mimes:jpeg, png, jpg, gif, svg|max:2048', // entar kasi gambar default
+            'name'=>'required|string|max:255',
+            'image'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $slug_new = Category::generateSlug($request->name);
-        $input = $request->only(['name', 'organization_id']);
-        $input['slug'] = $slug_new;
-        $input['organization_id'] = auth()->user()->organization_id;
 
-        
+        $input = [
+            'name' => $request->name,
+            'slug' => $slug_new,
+            'organization_id' => auth()->user()->organization_id,
+        ];
+
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
-            $destinationPath = 'images/categories/';
-            $image->move(public_path($destinationPath), $profileImage);
-            $input['image'] = $destinationPath . $profileImage;
+            if ($category->image && $category->image !== 'storage/no_image.png') {
+                $oldPath = str_replace('storage/', '', $category->image);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('image')->store('categories', 'public');
+            $input['image'] = 'storage/' . $path;
         }
 
-        Category::where('slug', $slug)->update($input);
+        $category->update($input);
+
         session()->flash('success', 'Category has been updated.');
         return redirect()->route('org.category-management-index');
     }
