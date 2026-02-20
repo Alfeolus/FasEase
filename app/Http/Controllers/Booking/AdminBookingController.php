@@ -59,7 +59,7 @@ class AdminBookingController extends Controller
         if($booking->user) {
             $booking->user->notify(new BookingStatusUpdatedNotification($booking));
         }
-        return back()->with('error', 'Booking rejected');
+        return back()->with('success', 'Booking rejected');
     }
 
 }

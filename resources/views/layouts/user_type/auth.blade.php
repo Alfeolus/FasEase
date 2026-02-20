@@ -10,17 +10,9 @@
         class="position-fixed top-50 start-50 translate-middle z-index-3"
         style="min-width: 320px;"
     >
-        @if(session('success'))
-            <div class="alert alert-success text-center shadow">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger text-center shadow">
-                {{ session('error') }}
-            </div>
-        @endif
+        <div class="alert alert-success text-center shadow">
+        {{ session('success') }}
+        </div>
     </div>
     @endif
 
