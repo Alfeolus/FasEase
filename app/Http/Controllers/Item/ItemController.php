@@ -81,7 +81,7 @@ class ItemController extends Controller
             $input['image'] = 'storage/' . $path;
 
         } else {
-            $input['image'] = 'storage/no_image.png';
+            $input['image'] = 'storage/app/public/no_image.png';
         }
 
         Item::create($input);
@@ -121,7 +121,7 @@ class ItemController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($item->image && $item->image !== 'storage/no_image.png') {
+            if ($item->image && $item->image !== 'storage/app/public/no_image.png') {
                 $oldPath = str_replace('storage/', '', $item->image);
                 Storage::disk('public')->delete($oldPath);
             }

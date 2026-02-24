@@ -57,7 +57,7 @@ class CategoryController extends Controller
             $input['image'] = 'storage/' . $path;
 
         } else {
-            $input['image'] = 'storage/no_image.png';
+            $input['image'] = 'storage/app/public/no_image.png';
         }
         
         Category::create($input);
@@ -96,7 +96,7 @@ class CategoryController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($category->image && $category->image !== 'storage/no_image.png') {
+            if ($category->image && $category->image !== 'storage/app/public/no_image.png') {
                 $oldPath = str_replace('storage/', '', $category->image);
                 Storage::disk('public')->delete($oldPath);
             }
