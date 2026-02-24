@@ -53,7 +53,7 @@ class OrganizationController extends Controller
             $input['image'] = 'storage/' . $path;
 
         } else {
-            $input['image'] = 'storage/no_image.png';
+            $input['image'] = 'storage/app/public/no_image.png';
         }
 
         Organization::create($input);
@@ -89,7 +89,7 @@ class OrganizationController extends Controller
 
         if ($request->hasFile('image')) {
 
-            if ($organization->image && $organization->image !== 'storage/no_image.png') {
+            if ($organization->image && $organization->image !== 'storage/app/public/no_image.png') {
                 $oldPath = str_replace('storage/', '', $organization->image);
                 Storage::disk('public')->delete($oldPath);
             }
