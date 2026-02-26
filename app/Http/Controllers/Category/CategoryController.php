@@ -40,7 +40,7 @@ class CategoryController extends Controller
         // slug nya ini gausah ditampilin
         $request->validate([
             'name'=>'required|string|max:255|',
-            'image'=>'nullable|image|mimes:jpeg, png, jpg, gif, svg|max:2048', // entar kasi gambar default
+            'image'=>'nullable|image', // entar kasi gambar default
         ]);
 
         // generate slug
@@ -50,14 +50,15 @@ class CategoryController extends Controller
         $input['organization_id'] = auth()->user()->organization_id;
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store(
-                'categories',   
-                'public'        
-            );
-            $input['image'] = 'storage/' . $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('categories'), $filename);
+
+            $input['image'] = 'categories/' . $filename;
 
         } else {
-            $input['image'] = 'storage/app/public/no_image.png';
+            $input['image'] = 'categories/no_image.png';
         }
         
         Category::create($input);
@@ -84,7 +85,7 @@ class CategoryController extends Controller
 
         $request->validate([
             'name'=>'required|string|max:255',
-            'image'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image'=>'nullable|image',
         ]);
 
         $slug_new = Category::generateSlug($request->name);
@@ -96,13 +97,20 @@ class CategoryController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($category->image && $category->image !== 'storage/app/public/no_image.png') {
-                $oldPath = str_replace('storage/', '', $category->image);
-                Storage::disk('public')->delete($oldPath);
+
+            if ($category->image && $category->image !== 'categories/no_image.png') {
+                $oldPath = public_path($category->image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $path = $request->file('image')->store('categories', 'public');
-            $input['image'] = 'storage/' . $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('categories'), $filename);
+
+            $input['image'] = 'categories/' . $filename;
         }
 
         $category->update($input);

@@ -74,11 +74,17 @@ class UserController extends Controller
             'name' => ['required', 'max:50'],
             'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['required', 'max:15'],
-            'password' => ['required', 'min:8', 'max:20'],
+            'password' => ['nullable', 'required', 'min:8', 'max:20'],
             'role' => ['required'],
             'organization_id' => ['required'],
             'is_active' => ['required'],
         ]);
+
+        if (empty($attributes['password'])) {
+            unset($attributes['password']);
+        } else {
+            $attributes['password'] = bcrypt($attributes['password']);
+        }
 
         $user->update($attributes);
 

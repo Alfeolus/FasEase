@@ -62,7 +62,7 @@ class ItemController extends Controller
             'category_id' => 'required',
             'name' => 'required|string|max:255|',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image',
             'is_active' => 'required|boolean',
             'max_book_duration' => 'required|integer|min:1',
         ]);
@@ -74,14 +74,16 @@ class ItemController extends Controller
         $input['organization_id'] = auth()->user()->organization_id;
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store(
-                'categories',   
-                'public'        
-            );
-            $input['image'] = 'storage/' . $path;
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('items'), $filename);
+
+            $input['image'] = 'items/' . $filename;
 
         } else {
-            $input['image'] = 'storage/app/public/no_image.png';
+            $input['image'] = 'items/no_image.png';
         }
 
         Item::create($input);
@@ -105,7 +107,7 @@ class ItemController extends Controller
             'category_id' => 'required',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image',
             'is_active' => 'required|boolean',
             'max_book_duration' => 'required|integer|min:1',
         ]);
@@ -121,13 +123,20 @@ class ItemController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($item->image && $item->image !== 'storage/app/public/no_image.png') {
-                $oldPath = str_replace('storage/', '', $item->image);
-                Storage::disk('public')->delete($oldPath);
+
+            if ($item->image && $item->image !== 'items/no_image.png') {
+                $oldPath = public_path($item->image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $path = $request->file('image')->store('items', 'public');
-            $input['image'] = 'storage/' . $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('items'), $filename);
+
+            $input['image'] = 'items/' . $filename;
         }
 
         $item->update($input);
