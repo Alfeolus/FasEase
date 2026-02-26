@@ -37,7 +37,7 @@ class OrganizationController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'location' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
+            'image' => 'nullable|image',
         ]);
 
         $slug_new = Organization::generateSlug($request->name);
@@ -46,14 +46,16 @@ class OrganizationController extends Controller
         $input['token'] = Str::random(40);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store(
-                'categories',   
-                'public'       
-            );
-            $input['image'] = 'storage/' . $path;
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('organizations'), $filename);
+
+            $input['image'] = 'organizations/' . $filename;
 
         } else {
-            $input['image'] = 'storage/app/public/no_image.png';
+            $input['image'] = 'organizations/no_image.png';
         }
 
         Organization::create($input);
@@ -76,7 +78,7 @@ class OrganizationController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'location' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
+            'image' => 'nullable|image',
         ]);
 
         $input = [
@@ -89,13 +91,19 @@ class OrganizationController extends Controller
 
         if ($request->hasFile('image')) {
 
-            if ($organization->image && $organization->image !== 'storage/app/public/no_image.png') {
-                $oldPath = str_replace('storage/', '', $organization->image);
-                Storage::disk('public')->delete($oldPath);
+            if ($organization->image && $organization->image !== 'organizations/no_image.png') {
+                $oldPath = public_path($organization->image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $path = $request->file('image')->store('organizations', 'public');
-            $input['image'] = 'storage/' . $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('organizations'), $filename);
+
+            $input['image'] = 'organizations/' . $filename;
         }
 
         $organization->update($input);
